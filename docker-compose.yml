@@ -1,0 +1,35 @@
+# set version as 3
+version: '3'
+
+# start services
+
+# web service exaplination
+# web service which build docker image using Dockerfile.dev (For dev env) using port 80 for localhost form conatiner port 3000
+# set reference which watch anything change in working dir copy chnage to container /app dir with node_modules 
+
+# tests service explaination
+# test service build image using same webservice Docker file without port (port not require for test)
+# set same reference for any current dir change for test file to container /app dir with node_modules
+# change Dockerfile.dev CMD from ["npm", "run", "start"] to ["npm", "run", "test"] using command
+
+services:
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "80:3000"
+    volumes:
+      - /app/node_modules
+      - .:/app
+  tests:
+    build: 
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - .:/app
+    command: ["npm", "run", "test"]
+
+
+# dokcer-compose up or docker-compose --build will run this file 

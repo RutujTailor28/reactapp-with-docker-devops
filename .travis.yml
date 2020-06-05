@@ -1,0 +1,32 @@
+# set language as genric
+language: generic
+
+# sudo permission set for setup
+sudo: required
+
+# set docker service
+service: 
+  - docker
+
+# execute before install (Command build docker image using Dockerfile.dev) set tag name as hirentariwala/docker-devops-reactapp
+# we can use hirentariwala/docker-devops-reactapp tagname as further process
+before_install:
+  - docker build -t hirentariwala/docker-devops-reactapp -f Dockerfile.dev .
+
+# First script run hirentariwala/docker-devops-reactapp image with test command which return status code 
+script:
+  - docker run -e CI=true hirentariwala/docker-devops-reactapp npm run test
+
+# this will deploy our app on server if any change found on master branch
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "devopsdemo"
+  env: "Devopsdemo-env"
+  bucket_name: "elasticbeanstalk-us-east-2-866552997585"
+  bucket_path: "devopsdemo"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: "$AWS_SECRET_KEY"
